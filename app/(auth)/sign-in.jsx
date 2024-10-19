@@ -1,16 +1,43 @@
 import { View, Text } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Container from '../../components/Container';
 import FormField from '../../components/FormField';
 import CustomButton from '../../components/CustomButton';
 import { router } from 'expo-router';
 import Icons from '../../constants/Icons';
+import { EmailChecker } from '../../utils/validate';
 
 const SignIn = () => {
+  const [isEmailClicked, setIsEmailClicked] = useState(false);
+  const [isPasswordClicked, setIsPasswordClicked] = useState(false);
   const [form, setForm] = useState({
     email: '',
-    password: ''
+    password: '',
+    emailError: '',
+    passwordError: '',
   })
+
+
+
+  useEffect(() => {
+    const errorEmail = isEmailClicked ? form.email !== '' ? EmailChecker(form.email) : 'This field is required' : '';
+    const errorPass = isPasswordClicked ? form.password !== '' ? form.password.length > 4 ? '' : 'Password must have at least 4 characters' : 'This field is required' : '';
+  
+    if (form.emailError !== errorEmail) {
+      setForm((prev) => ({
+        ...prev,
+        emailError: errorEmail,
+      }))
+    }
+
+    if (form.passwordError !== errorPass) {
+      setForm((prev) => ({
+        ...prev,
+        passwordError: errorPass,
+      }))
+    }
+  }, [form.email, form.password, isEmailClicked, isPasswordClicked]);
+  
 
   return (
     <Container>
@@ -23,19 +50,23 @@ const SignIn = () => {
         </Text>
       </View>
 
-      <View className='items-center justify-start w-full h-auto mt-[50px]'>
+      <View className={`items-center justify-start w-full h-auto ${form.emailError || form.passwordError ? 'mt-[20px]' : 'mt-[50px]'}`}>
         <FormField 
           placeholder={'Email'}
           value={form.email}
           handleChangeText={(e) => setForm({ ...form, email: e})}
-          styles='mt-7 mx-2'
+          styles='mt-8'
           keyboardType='email-address'
+          error={form.emailError}
+          onBlur={() => setIsEmailClicked(true)} // Optionally reset on blur
         />
         <FormField 
           placeholder={'Password'}
           value={form.password}
           handleChangeText={(e) => setForm({ ...form, password: e})}
           styles='mt-8'
+          error={form.passwordError}
+          onBlur={() => setIsPasswordClicked(true)} // Optionally reset on blur
         />
 
         <CustomButton
@@ -61,7 +92,7 @@ const SignIn = () => {
         />
       </View>
 
-      <View className='mt-[60px] items-center'>
+      <View className={`${form.emailError || form.passwordError ? 'mt-[20px]' : 'mt-[60px]'} items-center`}>
         <Text className='text-[#1F41BB] font-bold text-base'>
           Or continue with
         </Text>

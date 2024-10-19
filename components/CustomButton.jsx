@@ -1,4 +1,4 @@
-import { Text, Image, TouchableOpacity } from 'react-native';
+import { Text, Image, TouchableOpacity, Keyboard } from 'react-native';
 import React from 'react';
 
 const CustomButton = ({
@@ -9,6 +9,8 @@ const CustomButton = ({
   onPress,
   disabled,
   textStyle,
+  iconStyle,
+  onPressOut,
 }) => {
   return (
     <TouchableOpacity
@@ -16,23 +18,25 @@ const CustomButton = ({
       activeOpacity={0.7}
       onPress={onPress}
       disabled={disabled}
+      onPressOut={() => Keyboard.dismiss()}
     >
 
       {icon ? 
         <Image
           source={icon}
-          className="h-6 w-6"
+          className={`h-7 w-7 ${iconStyle}`}
           resizeMode="contain"
           tintColor={iconTint}
         /> : ""
       }
 
+      {label ?
       <Text
         className={`text-base font-bold text-center ${textStyle}`}
       >
         {label}
-      </Text>
-
+      </Text> : ""
+      }
     </TouchableOpacity>
   )
 }

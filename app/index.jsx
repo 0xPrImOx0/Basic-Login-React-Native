@@ -1,10 +1,8 @@
 import { View, Text, Image } from "react-native";
 import { router } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
 import images from '../constants/images';
 import Container from "@/components/Container";
 import CustomButton from "@/components/CustomButton";
-import { StatusBar } from 'expo-status-bar'
 
 export default function Index() {
   return (

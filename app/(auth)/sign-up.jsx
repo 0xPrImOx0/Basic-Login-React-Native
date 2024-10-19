@@ -29,7 +29,7 @@ const SignUp = () => {
           placeholder={'Email'}
           value={form.email}
           handleChangeText={(e) => setForm({ ...form, email: e})}
-          styles='mt-7 mx-2'
+          styles='mt-7'
           keyboardType='email-address'
         />
         <FormField 
