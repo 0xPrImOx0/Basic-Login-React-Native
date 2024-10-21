@@ -1,17 +1,42 @@
 import { View, Text } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Container from '../../components/Container';
 import FormField from '../../components/FormField';
 import CustomButton from '../../components/CustomButton';
 import Icons from '../../constants/Icons';
 import { router } from 'expo-router';
+import { ConfirmPasswordChecker, PasswordChecker, EmailChecker } from '../../utils/validate';
+
 
 const SignUp = () => {
+  const [isEmailClicked, setIsEmailClicked] = useState(false);
+  const [isPasswordClicked, setIsPasswordClicked] = useState(false);
+  const [isConfirmPasswordClicked, setIsConfirmPasswordClicked] = useState(false);
+
   const [form, setForm] = useState({
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    emailError: '',
+    passwordError: '',
+    confirmPasswordError: '',
   })
+  
+  useEffect(() => {
+    const emailError = isEmailClicked && EmailChecker(form.email);
+  
+    const passwordError = isPasswordClicked && PasswordChecker(form.password);
+
+    const confirmPasswordError = isConfirmPasswordClicked && ConfirmPasswordChecker(form.password, form.confirmPassword);
+  
+    setForm((prev) => ({
+      ...prev,
+      emailError,
+      passwordError,
+      confirmPasswordError,
+    }));
+  }, [form.email, form.password, form.confirmPassword, isEmailClicked, isPasswordClicked, isConfirmPasswordClicked]);
+  
 
   return (
     <Container>
@@ -31,18 +56,24 @@ const SignUp = () => {
           handleChangeText={(e) => setForm({ ...form, email: e})}
           styles='mt-7'
           keyboardType='email-address'
+          error={form.emailError}
+          onBlur={() => setIsEmailClicked(true)} // Optionally reset on blur
         />
         <FormField 
           placeholder={'Password'}
           value={form.password}
           handleChangeText={(e) => setForm({ ...form, password: e})}
           styles='mt-8'
+          error={form.passwordError}
+          onBlur={() => setIsPasswordClicked(true)} // Optionally reset on blur
         />
         <FormField 
           placeholder={'Confirm Password'}
           value={form.confirmPassword}
           handleChangeText={(e) => setForm({ ...form, confirmPassword: e})}
           styles='mt-8'
+          error={form.confirmPasswordError}
+          onBlur={() => setIsConfirmPasswordClicked(true)} // Optionally reset on blur
         />
 
         <CustomButton
@@ -60,7 +91,7 @@ const SignUp = () => {
         />
       </View>
 
-      <View className='mt-[60px] items-center'>
+      <View className={`items-center ${form.emailError || form.passwordError || form.confirmPasswordError || form.email || form.password || form.confirmPassword ? 'mt-[20px]' : 'mt-[60px]'}`}>
         <Text className='text-[#1F41BB] font-bold text-base'>
           Or continue with
         </Text>

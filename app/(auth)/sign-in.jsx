@@ -5,7 +5,7 @@ import FormField from '../../components/FormField';
 import CustomButton from '../../components/CustomButton';
 import { router } from 'expo-router';
 import Icons from '../../constants/Icons';
-import { EmailChecker } from '../../utils/validate';
+import { EmailChecker, PasswordChecker } from '../../utils/validate';
 
 const SignIn = () => {
   const [isEmailClicked, setIsEmailClicked] = useState(false);
@@ -20,23 +20,16 @@ const SignIn = () => {
 
 
   useEffect(() => {
-    const errorEmail = isEmailClicked ? form.email !== '' ? EmailChecker(form.email) : 'This field is required' : '';
-    const errorPass = isPasswordClicked ? form.password !== '' ? form.password.length > 4 ? '' : 'Password must have at least 4 characters' : 'This field is required' : '';
-  
-    if (form.emailError !== errorEmail) {
-      setForm((prev) => ({
-        ...prev,
-        emailError: errorEmail,
-      }))
-    }
+  const emailError = isEmailClicked && EmailChecker(form.email);
 
-    if (form.passwordError !== errorPass) {
-      setForm((prev) => ({
-        ...prev,
-        passwordError: errorPass,
-      }))
-    }
-  }, [form.email, form.password, isEmailClicked, isPasswordClicked]);
+  const passwordError = isPasswordClicked && PasswordChecker(form.password);
+
+  setForm((prev) => ({
+    ...prev,
+    emailError,
+    passwordError,
+  }));
+}, [form.email, form.password, isEmailClicked, isPasswordClicked]);
   
 
   return (
@@ -50,7 +43,7 @@ const SignIn = () => {
         </Text>
       </View>
 
-      <View className={`items-center justify-start w-full h-auto ${form.emailError || form.passwordError ? 'mt-[20px]' : 'mt-[50px]'}`}>
+      <View className={`items-center justify-start w-full h-auto ${(form.emailError || form.passwordError) || (!form.emailError || !form.passwordError) ? 'mt-[20px]' : 'mt-[50px]'}`}>
         <FormField 
           placeholder={'Email'}
           value={form.email}
